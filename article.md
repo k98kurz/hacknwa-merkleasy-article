@@ -4,7 +4,7 @@
 
 Merkle trees are tree data structures composed by recursive, pairwise hashing.
 
-For example, say we have four messages we want to commit into a set. All three
+For example, say we have four messages we want to commit into a set. All four
 will be hashed down into a single hash, called the root, and proofs can be
 derived to verify set inclusion of any message.
 
