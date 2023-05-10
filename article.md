@@ -1,5 +1,10 @@
 # Merkle Trees
 
+The source for this article can be found here:
+https://github.com/k98kurz/hacknwa-merkleasy-article
+
+All libraries and packages cited in this article are free and open source.
+
 ## Overview
 
 Merkle trees are tree data structures composed by recursive, pairwise hashing.
@@ -187,7 +192,9 @@ PKI commitment. These public keys could be the equivalent of certificate
 authorities, and they can authorize further public keys by signing certificates
 that include the Merkle root of more public keys, e.g. for a cluster of servers.
 
-The below example uses the Ed25519 implementation from the PyNaCl library.
+The below example uses the Ed25519 implementation from the PyNaCl library, the
+`token_bytes` function for cryptographic quality entropy, and the `json` library
+for a quick/dirty/contrived example of serialization/deserialization.
 
 ```python
 from merkleasy import Tree
@@ -256,21 +263,35 @@ cert = bytes.fromhex(response['cert'])
 cert_doc = json.loads(str(cert[64:], 'utf-8'))
 
 # verify the cert
-assert bytes.fromhex(cert_doc['pki_root']) in authorized_pki_roots
-VerifyKey(bytes.fromhex(cert_doc['authorized_by'])).verify(cert)
-Tree.verify(
-    bytes.fromhex(cert_doc['pki_root']),
-    bytes.fromhex(cert_doc['authorized_by']),
-    [bytes.fromhex(step) for step in cert_doc['authorization']]
-)
+try:
+    assert bytes.fromhex(cert_doc['pki_root']) in authorized_pki_roots
+    print('verified: pki is authorized')
+    _ = VerifyKey(bytes.fromhex(cert_doc['authorized_by'])).verify(cert)
+    print('verified: the certificate was signed by the CA')
+    Tree.verify(
+        bytes.fromhex(cert_doc['pki_root']),
+        bytes.fromhex(cert_doc['authorized_by']),
+        [bytes.fromhex(step) for step in cert_doc['authorization']]
+    )
+    print('verified: the CA is part of the PKI')
+except BaseException as e:
+    print(f'error: {e}')
 
 # verify the key used to sign the message is part of the cert
-Tree.verify(
-    bytes.fromhex(cert_doc['key_root']),
-    bytes(server_key),
-    server_auth
-)
+try:
+    Tree.verify(
+        bytes.fromhex(cert_doc['key_root']),
+        bytes(server_key),
+        server_auth
+    )
+    print('verified: server key')
+except BaseException as e:
+    print(f'error: {e}')
 
 # verify the message was signed properly
-server_key.verify(message)
+try:
+    _ = server_key.verify(message)
+    print('verified: message signature from server')
+except BaseException as e:
+    print(f'error: {e}')
 ```
