@@ -246,7 +246,8 @@ response = json.dumps({
 })
 
 
-# client side parsing
+# client side setup and parsing
+authorized_pki_roots = [pki.root, b'some other pki root, etc']
 response = json.loads(response)
 message = bytes.fromhex(response['message'])
 server_key = VerifyKey(bytes.fromhex(response['server_key']))
@@ -255,6 +256,7 @@ cert = bytes.fromhex(response['cert'])
 cert_doc = json.loads(str(cert[64:], 'utf-8'))
 
 # verify the cert
+assert bytes.fromhex(cert_doc['pki_root']) in authorized_pki_roots
 VerifyKey(bytes.fromhex(cert_doc['authorized_by'])).verify(cert)
 Tree.verify(
     bytes.fromhex(cert_doc['pki_root']),
