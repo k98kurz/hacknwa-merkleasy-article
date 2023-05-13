@@ -22,3 +22,12 @@ source venv/Scripts/activate
 pip install merkleasy==0.0.2
 pip install pynacl
 ```
+
+## pip hash
+
+To use hashing mode, use the `requirements.txt file` instead of the
+`pip install...` commands:
+
+```bash
+pip install -r requirements.txt
+```

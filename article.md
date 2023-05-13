@@ -5,9 +5,85 @@ https://github.com/k98kurz/hacknwa-merkleasy-article
 
 All libraries and packages cited in this article are free and open source.
 
+## Prerequisites
+
+### *nix
+
+```bash
+python -m venv venv/
+source venv/bin/activate
+pip install merkleasy==0.0.2
+pip install pynacl==1.5.0
+```
+
+### Winderps
+
+```bash
+python -m venv venv/
+source venv/Scripts/activate
+pip install merkleasy==0.0.2
+pip install pynacl==1.5.0
+```
+
+### pip hash
+
+If you want to use hashing mode for requirements, put the following in a
+`requirements.txt` file:
+
+```
+merkleasy==0.0.2 --hash=sha256:8f325565afd8cd6c7efb37cced64fdcb0d370c894e8a24d4bedfdec7b6b4cef3
+cffi==1.15.1 --hash=sha256:04ed324bda3cda42b9b695d51bb7d54b680b9719cfab04227cdd1e04e5de3104
+pycparser==2.21 --hash=sha256:8ee45429555515e1f6b185e78100aea234072576aa43ab53aefcae078162fca9
+pynacl==1.5.0 --hash=sha256:20f42270d27e1b6a29f54032090b972d97f0a1b0948cc52392041ef7831fee93
+```
+
+Then replace the `pip install ...` lines above with
+`pip install -r requirements.txt`.
+
+## Eplanation of Merkle Trees written as a Greek epic poem by ChatGPT
+
+```
+Sing, O Muse, of the wondrous Merkle Tree,
+A structure cryptic, yet full of glee.
+In realms of data, it holds its might,
+Guarding integrity, with every byte.
+
+Like ancient heroes in epic tales of yore,
+Merkle Tree's saga we shall explore.
+At its core, a root, steadfast and strong,
+With branches branching, it grows along.
+
+Its leaves, the data, spread far and wide,
+Hashed and linked, none can deride.
+Each leaf a fragment, a digital clue,
+With hashes protecting what's true.
+
+Upon the journey, to verify,
+One need not wander, nor wonder why.
+For with a path, from leaf to root,
+The truth unravels, without dispute.
+
+A change in data, a simple tweak,
+Unleashes power that Merkle Tree seeks.
+The hashes differ, like tempest's storm,
+Revealing tampering, a breach of norm.
+
+Oh, Merkle Tree, a guardian bold,
+Your branches shelter secrets untold.
+With hashes deep, you weave your spell,
+Ensuring trust, where shadows dwell.
+
+So, let us hail this Greek-inspired verse,
+To Merkle Tree, we offer praise and rehearse.
+A cryptographic hero, steadfast and true,
+Protecting data, through and through.
+```
+
 ## Overview
 
 Merkle trees are tree data structures composed by recursive, pairwise hashing.
+This ensures that tampering can be detected, and only the data committed to by
+the root hash will be verified.
 
 For example, say we have four messages we want to commit into a set. All four
 will be hashed down into a single hash, called the root, and proofs can be
@@ -81,6 +157,7 @@ for step in steps:
         right = bytes.fromhex(step[1])
         print(f'{right.hex()=}')
     if step[0] == 'hash_final':
+        print('hash_final')
         final = sha256(left + right).digest()
         print(final.hex())
         assert root == final, 'verification failed'
@@ -179,10 +256,13 @@ measure for devices with limited storage as the block chain grew in size, and it
 has worked for those who use it. However, the verification of transactions by
 miners and nodes requires a full UTXO (unspent transaction output) set to be
 maintained, and some UTXOs date back to the first few blocks, so in practice it
-has not been a practice for miners and node operators to store trimmed blocks;
-it remains possible to remove transactions without any outstanding UTXOs from
+has not been standard for miners and node operators to store trimmed blocks; it
+remains possible to remove transactions without any outstanding UTXOs from
 blocks without sacrificing forward security, but new nodes require full blocks
 to verify the history of the chain, so this has not caught on.
+
+See the Bitcoin whitepaper section 7. Reclaiming Disk Space for the original
+specification of this data structure and the block pruning scheme.
 
 ### Public key infrastructure
 
