@@ -337,21 +337,25 @@ response = json.dumps({
 authorized_pki_roots = [pki.root, b'some other pki root, etc']
 response = json.loads(response)
 message = bytes.fromhex(response['message'])
+pki_root = bytes.fromhex(cert_doc['pki_root'])
 server_key = VerifyKey(bytes.fromhex(response['server_key']))
 server_auth = [bytes.fromhex(step) for step in response['server_auth']]
 cert = bytes.fromhex(response['cert'])
 cert_doc = json.loads(str(cert[64:], 'utf-8'))
+cert_root = bytes.fromhex(cert_doc['key_root'])
+ca_key = bytes.fromhex(cert_doc['authorized_by'])
+ca_auth = [bytes.fromhex(step) for step in cert_doc['authorization']]
 
 # verify the cert
 try:
-    assert bytes.fromhex(cert_doc['pki_root']) in authorized_pki_roots
+    assert pki_root in authorized_pki_roots
     print('verified: pki is authorized')
-    _ = VerifyKey(bytes.fromhex(cert_doc['authorized_by'])).verify(cert)
+    _ = VerifyKey(ca_key).verify(cert)
     print('verified: the certificate was signed by the CA')
     Tree.verify(
-        bytes.fromhex(cert_doc['pki_root']),
-        bytes.fromhex(cert_doc['authorized_by']),
-        [bytes.fromhex(step) for step in cert_doc['authorization']]
+        pki_root,
+        ca_key,
+        ca_auth
     )
     print('verified: the CA is part of the PKI')
 except BaseException as e:
@@ -360,11 +364,11 @@ except BaseException as e:
 # verify the key used to sign the message is part of the cert
 try:
     Tree.verify(
-        bytes.fromhex(cert_doc['key_root']),
+        cert_root,
         bytes(server_key),
         server_auth
     )
-    print('verified: server key')
+    print('verified: server key is part of cert')
 except BaseException as e:
     print(f'error: {e}')
 
