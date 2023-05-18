@@ -12,7 +12,7 @@ All libraries and packages cited in this article are free and open source.
 ```bash
 python -m venv venv/
 source venv/bin/activate
-pip install merkleasy==0.0.2
+pip install merkleasy==0.0.3
 pip install pynacl==1.5.0
 ```
 
@@ -21,7 +21,7 @@ pip install pynacl==1.5.0
 ```bash
 python -m venv venv/
 source venv/Scripts/activate
-pip install merkleasy==0.0.2
+pip install merkleasy==0.0.3
 pip install pynacl==1.5.0
 ```
 
@@ -31,7 +31,7 @@ If you want to use hashing mode for requirements, put the following in a
 `requirements.txt` file:
 
 ```
-merkleasy==0.0.2 --hash=sha256:8f325565afd8cd6c7efb37cced64fdcb0d370c894e8a24d4bedfdec7b6b4cef3
+merkleasy==0.0.3 --hash=sha256:3bab47747d26ebdca847d9dacc207d22eb67ba4ccdde26878065eedfb5f3b1d8
 cffi==1.15.1 --hash=sha256:04ed324bda3cda42b9b695d51bb7d54b680b9719cfab04227cdd1e04e5de3104
 pycparser==2.21 --hash=sha256:8ee45429555515e1f6b185e78100aea234072576aa43ab53aefcae078162fca9
 pynacl==1.5.0 --hash=sha256:20f42270d27e1b6a29f54032090b972d97f0a1b0948cc52392041ef7831fee93
@@ -214,6 +214,11 @@ except:
     print('error')
 
 # serialization
+serialized = tree1.to_dict()
+print(serialized)
+deserialized = Tree.from_dict(serialized)
+assert deserialized == tree1
+
 serialized = tree1.to_json()
 print(serialized)
 deserialized = Tree.from_json(serialized)

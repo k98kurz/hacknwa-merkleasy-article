@@ -10,7 +10,7 @@ Merklized data structures and their uses in distributed technologies.
 ```bash
 python -m venv venv/
 source venv/bin/activate
-pip install merkleasy==0.0.2
+pip install merkleasy==0.0.3
 pip install pynacl
 ```
 
@@ -19,7 +19,7 @@ pip install pynacl
 ```bash
 python -m venv venv/
 source venv/Scripts/activate
-pip install merkleasy==0.0.2
+pip install merkleasy==0.0.3
 pip install pynacl
 ```
 
@@ -30,4 +30,11 @@ To use hashing mode, use the `requirements.txt file` instead of the
 
 ```bash
 pip install -r requirements.txt
+```
+
+Note: the hash for a package can be found using the following:
+
+```bash
+pip download merkleasy==0.0.3
+pip hash merkleasy-0.0.3-py3-none-any.whl
 ```
