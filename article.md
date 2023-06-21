@@ -40,6 +40,15 @@ pynacl==1.5.0 --hash=sha256:20f42270d27e1b6a29f54032090b972d97f0a1b0948cc5239204
 Then replace the `pip install ...` lines above with
 `pip install -r requirements.txt`.
 
+Using hashing mode is a good practice to avoid potential supply chain attacks.
+In May of 2023, PyPI was provided with three subpoenas that are suspected to be
+related to supply chain attacks. They turned over the requested user data to the
+DoJ ([source](https://www.theregister.com/AMP/2023/05/25/pypi_us_government_subpoena/)).
+While PyPI strives to provide an immutable record of packages (i.e. no package
+version can be overwritten), a bug or vulnerability in their system could allow
+an attacker to bypass this constraint and overwrite package versions. The only
+100% guarantee against this is to verify dependency hashes.
+
 ## Eplanation of Merkle Trees written as a Greek epic poem by ChatGPT
 
 ```
